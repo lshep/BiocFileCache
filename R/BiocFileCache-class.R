@@ -1,4 +1,5 @@
 #' @import methods
+#' @import httr2
 #' @import httr
 #' @importFrom utils tar zip untar unzip
 #' @importFrom dplyr mutate
