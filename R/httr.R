@@ -108,38 +108,53 @@
     function(websource, localfile, proxy, config, ...)
 {
 
-
     ## retrieve file from hub to cache
     tryCatch({
 
         if(!is(proxy, "request")){
             if (proxy == ""){
-                proxy = NULL
-            }else{
-                proxy = use_proxy(proxy)
+                proxy <- NULL
+            } else {
+                proxy <- request() %>%
+                    req_proxy(proxy)  # req_proxy to set the proxy in httr2
             }
         }
 
-        if (!all(file.exists(dirname(localfile))))
-            dir.create(dirname(localfile), recursive=TRUE)
-
-        ## Download the resource in a way that supports https
-        if (interactive() && (packageVersion("httr") > "1.0.0")) {
-            response <- suppressWarnings({
-                GET(websource, progress(con = stderr()), config=config,
-                    write_disk(localfile, overwrite=TRUE), proxy, ...)
-            })
-            cat("\n") ## line break after progress bar
+        if((length(config)==0)){
+            config <- NULL
         } else {
-            response <- suppressWarnings({
-                GET(websource, write_disk(localfile, overwrite=TRUE),
-                    proxy, config=config, ...)
-            })
+            stopifnot(is.list(config))
         }
-        if (length(status_code(response))) {
-            if (status_code(response) != 302L)
-                stop_for_status(response)
+
+        if (!all(file.exists(dirname(localfile)))) dir.create(dirname(localfile), recursive=TRUE)
+
+        # set up request using httr2
+        req <- request(websource)
+        # This enables progress bars in httr2
+        if(interactive()){
+            req <- req %>% req_progress()
         }
+        # Apply the proxy if it's not NULL
+        if (!is.null(proxy)) {
+            req <- req %>% req_proxy(proxy)
+        }
+        # Apply the config if it's not NULL
+        if (!is.null(config)) {
+            req <- req %>% req_options(!!!config)
+        }
+        ## httr2 req_perform does not have an overwrite
+        ## assume overwrite will occur automatically
+        ## Perform the request and capture the response
+        response <- req_perform(req, path=localfile, ...)
+
+        cat("\n") ## line break after progress bar
+
+#  No longer needed?
+#        if (length(status_code(response))) {
+#            if (status_code(response) != 302L)
+#                stop_for_status(response)
+#        }
+
         TRUE
     }, error = function(err) {
         warning("download failed",
@@ -149,7 +164,5 @@
             call.=FALSE)
         FALSE
     })
-
-
 
 }
