@@ -1,6 +1,5 @@
 #' @import methods
 #' @import httr2
-#' @import httr
 #' @importFrom utils tar zip untar unzip
 #' @importFrom dplyr mutate
 #' @importFrom tools R_user_dir
@@ -303,7 +302,7 @@ setMethod("bfcnew", "BiocFileCache",
 setGeneric("bfcadd",
     function(
         x, rname, fpath = rname, rtype=c("auto", "relative", "local", "web"),
-        action=c("copy", "move", "asis"), proxy="",
+        action=c("copy", "move", "asis"), proxy=list(),
         download=TRUE, config=list(), ext=NA_character_,
         fname=c("unique", "exact"),...
     ) standardGeneric("bfcadd"),
@@ -316,7 +315,7 @@ setGeneric("bfcadd",
 setMethod("bfcadd", "missing",
     function(
         x, rname, fpath = rname, rtype=c("auto", "relative", "local", "web"),
-        action=c("copy", "move", "asis"), proxy="",
+        action=c("copy", "move", "asis"), proxy=list(),
         download=TRUE, config=list(), ext=NA_character_,
         fname=c("unique", "exact"), ...
     )
@@ -341,13 +340,16 @@ setMethod("bfcadd", "missing",
 #'     the file to the cache directory; or \code{asis} leave the file
 #'     in current location but save the path in the cache. If 'rtype
 #'     == "relative"', action can not be "asis".
-#' @param proxy character(1) (Optional) proxy server.
+#' @param proxy list() (Optional) options to be passed to
+#'     \code{httr2::req_proxy}.
 #' @param download logical(1) If \code{rtype=web}, should remote
 #'     resource be downloaded locally immediately.
-#' @param config list() passed as config argument in \code{httr::GET}
+#' @param config list() passed as argument to \code{httr2::req_options}. The
+#'     names of items shoudl be valid curl options as defined in
+#'     \code{curl::curl_options}.
 #' @param ... For 'bfcadd', 'bfcupdate' and 'bfcdownload': Additional
 #'     arguments passed to internal download functions for use with
-#'     \code{httr::GET}. For 'bfcrpaths': Additional arguments passed
+#'     \code{httr2::req_perform}. For 'bfcrpaths': Additional arguments passed
 #'     to 'bfcadd', or \code{exact} passed to 'bfcquery'. For
 #'     'bfcquery': Additional arguments passed to \code{grepl}. For
 #'     'exportbfc': Additional arguments to the selected outputMethod
@@ -382,7 +384,7 @@ setMethod("bfcadd", "BiocFileCache",
         x, rname, fpath = rname,
         rtype = c("auto", "relative", "local", "web"),
         action = c("copy", "move", "asis"),
-        proxy = "", download = TRUE, config = list(), ext=NA_character_,
+        proxy = list(), download = TRUE, config = list(), ext=NA_character_,
         fname=c("unique", "exact"),...)
 {
     stopifnot(
@@ -620,7 +622,7 @@ setMethod("bfcupdate", "missing",
 #' @exportMethod bfcupdate
 setMethod("bfcupdate", "BiocFileCache",
     function(x, rids, ..., rname=NULL, rpath=NULL, fpath=NULL,
-             proxy="", config=list(), ask=TRUE)
+             proxy=list(), config=list(), ask=TRUE)
 {
     stopifnot(!missing(rids), all(rids %in% bfcrid(x)))
     stopifnot(
@@ -1051,7 +1053,7 @@ setMethod("bfcneedsupdate", "BiocFileCacheBase",
 
 #' @export
 setGeneric("bfcdownload",
-    function(x, rid, proxy="", config=list(), ask=TRUE, FUN, ...)
+    function(x, rid, proxy=list(), config=list(), ask=TRUE, FUN, ...)
     standardGeneric("bfcdownload"),
     signature = "x"
 )
@@ -1061,7 +1063,7 @@ setGeneric("bfcdownload",
 #' @param rid character(1) Unique resource id.
 #' @exportMethod bfcdownload
 setMethod("bfcdownload", "missing",
-    function(x, rid, proxy="", config=list(), ask=TRUE, FUN, ...)
+    function(x, rid, proxy=list(), config=list(), ask=TRUE, FUN, ...)
 {
     bfcdownload(x=BiocFileCache(), rid=rid, proxy=proxy, config=config, ask=ask,
                 FUN=FUN, ...)
@@ -1082,7 +1084,7 @@ setMethod("bfcdownload", "missing",
 #' @aliases bfcdownload
 #' @exportMethod bfcdownload
 setMethod("bfcdownload", "BiocFileCache",
-    function(x, rid, proxy="", config=list(), ask=TRUE, FUN, ...)
+    function(x, rid, proxy=list(), config=list(), ask=TRUE, FUN, ...)
 {
     stopifnot(
         !missing(rid), length(rid) > 0L,
