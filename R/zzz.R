@@ -1,3 +1,5 @@
+globalVariables(c("rid", "id", "control", "access_time"))
+
 .onLoad <- function(libname, pkgname, ...) {
     ## options from getOption or Sys.env or default, in that order
     if (is.null(getBFCOption("CACHE"))) {
