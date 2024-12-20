@@ -111,14 +111,9 @@
     ## retrieve file from hub to cache
     tryCatch({
 
-        if(!is(proxy, "request")){
-            if (proxy == ""){
-                proxy <- NULL
-            } else {
-                proxy <- request() %>%
-                    req_proxy(proxy)  # req_proxy to set the proxy in httr2
-            }
-        }
+        if (proxy == ""){
+            proxy <- NULL
+        }         
 
         if((length(config)==0)){
             config <- NULL

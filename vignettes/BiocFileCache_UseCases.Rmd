@@ -354,17 +354,17 @@ bfcadd("myfile", url, download=FALSE, ext=".Rdata")
 
 # Access Behind a Proxy
 
-BiocFileCache uses CRAN package `httr` functions `HEAD` and `GET` for accessing
-web resources. This can be problematic if operating behind a proxy. The easiest
-solution is to set the `httr::set_config` with the proxy information.
 
-```
-proxy <- httr::use_proxy("http://my_user:my_password@myproxy:8080")
-## or
-proxy <- httr::use_proxy(Sys.getenv('http_proxy'))
-httr::set_config(proxy)
-```
+BiocFileCache uses CRAN package `httr2` functions for accessing and downloading
+web resources. This can be problematic if operating behind a
+proxy. Unfortunately unlike the previously used `httr::set_config`, there is no
+option to globally set the proxy for httr2 requests. You can pass proxy
+information into the bfcadd functions.
 
+```{r eval=FALSE}
+proxy <- "http://my_user:my_password@myproxy:8080"
+bfcadd(bfc, rname="uniquename", fpath="https://remoteresource", proxy=proxy)
+```
 
 # Group Cache Access
 

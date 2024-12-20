@@ -276,7 +276,7 @@ of \code{BiocFileCache()}.}
 
 \item{...}{For 'bfcadd', 'bfcupdate' and 'bfcdownload': Additional
 arguments passed to internal download functions for use with
-\code{httr::GET}. For 'bfcrpaths': Additional arguments passed
+\code{httr2::req_perform}. For 'bfcrpaths': Additional arguments passed
 to 'bfcadd', or \code{exact} passed to 'bfcquery'. For
 'bfcquery': Additional arguments passed to \code{grepl}. For
 'exportbfc': Additional arguments to the selected outputMethod
@@ -320,12 +320,15 @@ the file to the cache directory; or \code{asis} leave the file
 in current location but save the path in the cache. If 'rtype
 == "relative"', action can not be "asis".}
 
-\item{proxy}{character(1) (Optional) proxy server.}
+\item{proxy}{character(1) (Optional) proxy server passed to
+\code{httr2::req_proxy}}
 
 \item{download}{logical(1) If \code{rtype=web}, should remote
 resource be downloaded locally immediately.}
 
-\item{config}{list() passed as config argument in \code{httr::GET}}
+\item{config}{list() passed as argument to \code{httr2::req_options}. The
+names of items shoudl be valid curl options as defined in
+\code{curl::curl_options}.}
 
 \item{rids}{character() Vector of rids.}
 
