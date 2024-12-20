@@ -24,6 +24,7 @@ Imports:
     DBI,
     filelock,
     curl,
+    httr,
     httr2
 BugReports: https://github.com/Bioconductor/BiocFileCache/issues
 DevelopmentURL: https://github.com/Bioconductor/BiocFileCache

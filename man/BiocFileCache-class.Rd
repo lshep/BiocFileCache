@@ -133,7 +133,7 @@ bfcrid(x)
   fpath = rname,
   rtype = c("auto", "relative", "local", "web"),
   action = c("copy", "move", "asis"),
-  proxy = list(),
+  proxy = "",
   download = TRUE,
   config = list(),
   ext = NA_character_,
@@ -147,7 +147,7 @@ bfcrid(x)
   fpath = rname,
   rtype = c("auto", "relative", "local", "web"),
   action = c("copy", "move", "asis"),
-  proxy = list(),
+  proxy = "",
   download = TRUE,
   config = list(),
   ext = NA_character_,
@@ -178,7 +178,7 @@ bfcrid(x)
   rname = NULL,
   rpath = NULL,
   fpath = NULL,
-  proxy = list(),
+  proxy = "",
   config = list(),
   ask = TRUE
 )
@@ -217,9 +217,9 @@ bfcmeta(x, name, ...) <- value
 
 \S4method{bfcneedsupdate}{BiocFileCacheBase}(x, rids)
 
-\S4method{bfcdownload}{missing}(x, rid, proxy = list(), config = list(), ask = TRUE, FUN, ...)
+\S4method{bfcdownload}{missing}(x, rid, proxy = "", config = list(), ask = TRUE, FUN, ...)
 
-\S4method{bfcdownload}{BiocFileCache}(x, rid, proxy = list(), config = list(), ask = TRUE, FUN, ...)
+\S4method{bfcdownload}{BiocFileCache}(x, rid, proxy = "", config = list(), ask = TRUE, FUN, ...)
 
 \S4method{bfcremove}{missing}(x, rids)
 
@@ -276,7 +276,7 @@ of \code{BiocFileCache()}.}
 
 \item{...}{For 'bfcadd', 'bfcupdate' and 'bfcdownload': Additional
 arguments passed to internal download functions for use with
-\code{httr2::req_perform}. For 'bfcrpaths': Additional arguments passed
+\code{httr::GET}. For 'bfcrpaths': Additional arguments passed
 to 'bfcadd', or \code{exact} passed to 'bfcquery'. For
 'bfcquery': Additional arguments passed to \code{grepl}. For
 'exportbfc': Additional arguments to the selected outputMethod
@@ -320,15 +320,12 @@ the file to the cache directory; or \code{asis} leave the file
 in current location but save the path in the cache. If 'rtype
 == "relative"', action can not be "asis".}
 
-\item{proxy}{list() (Optional) options to be passed to
-\code{httr2::req_proxy}.}
+\item{proxy}{character(1) (Optional) proxy server.}
 
 \item{download}{logical(1) If \code{rtype=web}, should remote
 resource be downloaded locally immediately.}
 
-\item{config}{list() passed as argument to \code{httr2::req_options}. The
-names of items shoudl be valid curl options as defined in
-\code{curl::curl_options}.}
+\item{config}{list() passed as config argument in \code{httr::GET}}
 
 \item{rids}{character() Vector of rids.}
 
