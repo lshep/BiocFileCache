@@ -1,4 +1,4 @@
-context("httr2")
+context("httr")
 
 test_that("internal .httr_get_cache_info works", {
 
